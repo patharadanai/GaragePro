@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=K2D:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <title>GaragePro Pricing Plan</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" rel="stylesheet"> 
+
+
+    <link rel="stylesheet" href="compare.css">
+
+    <style>
+
+        body,*{font-family:'K2D','Sarabun',sans-serif}
+
+        :root {
+            --primary: #1a237e;
+            --accent: #ff9800;
+            --starter: #FEE7AA;
+            --growth: #C3EEFA;
+            --performance: #EFCFD4;
+            --enterprise: #CDEBC5;
+            --bg-light: #f4f7f9;
+            --yellow: #FCCF55;
+            --blue: #01A6BA;
+            --red: #F26665;
+            --green: #92CA68;
+        }
+
+        body {
+            font-family: 'K2D','Sarabun',sans-serif;
+            background-color: #e0e0e0;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 40px;
+        }
+
+        .poster-container {
+            width: 100%;
+            max-width: 1000px;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            padding: 50px;
+            border-radius: 24px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+
+        .header h1 { font-size: 64px; margin-bottom: 15px; }
+        .header h1 span { color: var(--growth); }
+        .header p { font-size: 20px; color: #cbd5e1; margin-bottom: 40px; }
+
+        .highlight {
+    color: red;
+    font-size: 1.8em; /* ⭐ ขยาย 30% */
+    font-weight: bold;
+}
+
+.poster-container {
+    position: relative; /* ⭐ สำคัญ */
+}
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .price-card {
+            background: white;
+            color: #333;
+            padding: 30px 20px;
+            border-radius: 20px;
+            position: relative;
+            transition: transform 0.2s;
+            overflow: visible;
+            padding-top: 35px; /* เพิ่มพื้นที่ด้านบน */
+        }
+
+        .price-card:hover { transform: translateY(-10px); }
+        .price-card.best-value { border: 6px solid var(--accent); scale: 1.05; }
+        
+        .badge {
+            position: absolute;
+            top: -18px; /* */
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--accent);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+
+        .plan-name { font-size: 22px; font-weight: 700; text-transform: uppercase; }
+        .plan-limit { color: #64748b; font-size: 14px; margin-bottom: 15px; }
+        .price { font-size: 36px; font-weight: 700; color: var(--primary); }
+        .price span { font-size: 16px; color: #64748b; }
+
+        .feature-list {
+            text-align: left;
+            margin: 20px 0;
+            font-size: 14px;
+            list-style: none;
+            padding: 0;
+        }
+        .feature-list li { margin-bottom: 8px; display: flex; align-items: center; }
+        .feature-list li::before { content: '✓'; color: green; margin-right: 8px; font-weight: bold; }
+
+        .trial-tag {
+            background: #f1f5f9;
+            padding: 8px;
+            border-radius: 10px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        /* Table Section */
+        .detail-container {
+            width: 100%;
+            max-width: 1000Px;
+            background: white;
+            padding: 50px;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th { padding: 20px; text-align: center; color: black; }
+        .th-starter { background: var(--starter); }
+        .th-growth { background: var(--growth); }
+        .th-perf { background: var(--performance); }
+        .th-ent { background: var(--enterprise); }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e2e8f0;
+            text-align: center;
+        }
+
+        td:first-child { text-align: left; font-weight: 500; color: #1e293b; }
+
+        .check { color: #4caf50; font-weight: bold; font-size: 18px; }
+        .cross { color: #cbd5e1; }
+
+        .promo-banner {
+            background: #fff3e0;
+            border-left: 5px solid var(--accent);
+            padding: 15px;
+            margin-top: 30px;
+            border-radius: 8px;
+            font-weight: 600;
+            color: #e65100;
+        }
+
+        .logo-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-size: 64px;
+}
+
+.logo-title img {
+    height: 100px;
+}
+
+/* หน้าเปรียบเทียบ */
+.compare-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: var(--accent);
+    border: none;
+    padding: 10px 18px;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 10;
+}
+
+/* พื้นหลังมืด */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    
+    background: rgba(0,0,0,0.6);
+}
+
+/* กล่อง popup */
+.modal-content {
+    position: relative;
+    width: 90%;
+    height: 90%;
+    margin: 3% auto;
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+/* iframe */
+.modal-content iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+/* ปุ่มปิด */
+.close {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 28px;
+    cursor: pointer;
+    z-index: 10;
+}
+
+/* animation pop up */
+.modal-content {
+    animation: zoomIn 0.25s ease;
+}
+
+@keyframes zoomIn {
+    from { transform: scale(0.9); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+.poster-container {
+    position: relative; /* ⭐ สำคัญ */
+}
+
+/* 📱 mobile */
+
+@media (max-width: 768px) {
+
+    .modal-content {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        border-radius: 0;
+    }
+    
+    .logo-title {
+        font-size: 28px;
+        align-items: center;
+        gap: 0px; /* หรือ 0 ถ้าอยากติด */
+        white-space: nowrap; /* ⭐ ตัวสำคัญ */
+    }
+
+    .logo-title img {
+        height: 45px;
+    }
+
+   /* body {
+        padding: 10px;
+    } */
+
+    .poster-container,
+    .detail-container {
+        padding: 20px;
+        border-radius: 16px;
+    }
+
+    .header h1 {
+        font-size: 32px;
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+    }
+
+    .header p {
+        font-size: 14px;
+        text-align: center;
+    }
+
+    /* ✅ แก้ให้เลื่อนเฉพาะแพ็คเกจ */
+    .pricing-grid {
+     display: flex;
+    overflow-x: auto;
+    gap: 15px;
+    padding: 20px 10px; /* ⭐ เพิ่ม padding กันโดนตัด */
+    scroll-snap-type: x mandatory;
+
+    align-items: flex-start;
+}
+
+    /* ซ่อน scrollbar */
+    .pricing-grid::-webkit-scrollbar {
+        display: none;
+    }
+
+    /* ✅ การ์ดขนาดเท่ากัน */
+    .price-card {
+    min-width: 280px;
+    max-width: 280px;
+
+    flex-shrink: 0;
+    scroll-snap-align: center;
+
+    display: flex;
+    flex-direction: column;
+
+    padding: 20px;
+    border-radius: 16px;
+
+    height: auto; /* ⭐ แก้จาก 100% */
+    margin-top: 5px; /* ⭐ กันโดนตัด*/
+}
+
+
+    /* ✅ จัดกลางการ์ด */
+    .price-card * {
+        text-align: center;
+        flex-grow: 1;
+    }
+
+    .feature-list {
+        text-align: left;
+    }
+
+    /* ✅ ป้องกันข้อความล้น */
+    .plan-name,
+    .plan-limit,
+    .price {
+        white-space: nowrap;
+    }
+
+    /* ❌ เอาการเลื่อนออกจาก table */
+    .detail-container {
+        overflow-x: auto;
+    }
+
+    table {
+
+    width: 100%;
+    min-width: 600px; /* ⭐ บังคับไม่ให้บีบ */
+    border-collapse: collapse;
+    table-layout: fixed;
+        
+    }
+
+    td, th {
+
+    text-align: center;
+    padding: 10px;
+    font-size: 12px;
+    white-space: nowrap; /* ⭐ ไม่ให้ตกบรรทัด */
+
+    }
+
+    th:first-child,
+    td:first-child {
+    text-align: left;
+    width: 40%;
+
+    }
+
+    th:not(:first-child),
+    td:not(:first-child) {
+    width: 15%;
+    }
+
+    /* footer เรียงลง */
+    .footer-promo {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+}
+
+    </style>
+</head>
+<body>
+
+    <div class="poster-container">
+
+        <!-- ปุ่ม Compare -->
+<button class="compare-btn" onclick="openCompare()">
+    🔍 เปรียบเทียบราคา
+</button>
+
+        <div class="header">
+
+            <h1 class="logo-title">
+                <img src="images/garagepro-logo.png" alt="logo">
+                 GaragePro
+            </h1>
+
+            <div style="display: flex; justify-content: center; gap: 20px; margin-top: 10px;">
+
+            <span style="background: var(--accent); color: black; padding: 8px 24px; border-radius: 5px; font-weight: bold;">
+                    ★  ไม่จำกัดบัญชีผู้ใช้ </span>
+
+            <span style="background: var(--accent); color: black; padding: 8px 24px; border-radius: 5px; font-weight: bold;">
+                    ★  ไม่จำกัดจำนวนรูปภาพ </span>
+                </div>
+
+            <p>ระบบบริหารอู่ที่โตไปพร้อมกับคุณ | จ่ายตามปริมาณรถคุ้มค่าที่สุด</p>
+            
+        </div>
+
+        <div class="pricing-grid">
+            <div class="price-card">
+                <div class="plan-name" style="color: var(--yellow)">Basic</div>
+                <div class="plan-limit">&lt; 50 คัน / เดือน</div>
+                <div class="price">3,900<span> /เดือน</span></div>
+                <ul class="feature-list">
+                    <li>Control Board</li>
+                    <li>ใบงานซ่อม</li>
+                    <li>Fast Upload Image (ฟรี)</li>
+                </ul>
+                <div class="trial-tag">Free Trial 45 วัน</div>
+            </div>
+
+            <div class="price-card best-value">
+                <div class="badge">ยอดนิยม!</div>
+                <div class="plan-name" style="color: var(--blue)">Growth</div>
+                <div class="plan-limit">50-120 คัน / เดือน</div>
+                <div class="price">5,900<span> /เดือน</span></div>
+                <ul class="feature-list">
+                    <li>Job Chat & Comment (ฟรี)</li>
+                    <li>Advance Claim</li>
+                    <li>ระบบ QC & รายงานขั้นสูง</li>
+                </ul>
+                <div class="trial-tag" style="background: #ffc811;">Free Trial 60 วัน</div>
+            </div>
+
+            <div class="price-card">
+                <div class="plan-name" style="color: var(--red)">Performance</div>
+                <div class="plan-limit">120-250 คัน / เดือน</div>
+                <div class="price">7,900<span> /เดือน</span></div>
+                <ul class="feature-list">
+                    <li>ระบบคะแนนงานซ่อม (ฟรี)</li>
+                    <li>Executive Dashboard</li>
+                    <li>EMCS Integration</li>
+                    <li>LINE Daily Report</li>
+                </ul>
+                <div class="trial-tag">Free Trial 75 วัน</div>
+            </div>
+
+            <div class="price-card">
+                <div class="plan-name" style="color: var(--green)">Enterprise</div>
+                <div class="plan-limit">250+ คัน / เดือน</div>
+                <div class="price">9,900<span> /เดือน</span></div>
+                <ul class="feature-list">
+                    <li>Multi-Branch Support</li>
+                    <li>Advanced Workflow</li>
+                    <li>Priority Support</li>
+                    <li>EMCS Integration</li>
+                </ul>
+                <div class="trial-tag">Free Trial 90 วัน</div>
+            </div>
+        </div>
+
+        <div class="promo-banner" style="background: rgba(255,255,255,0.1); color: #fff; border: 1px dashed var(--accent);">
+    🔥 พิเศษ! จ่ายรายปี ประหยัดทันที 
+    <span class="highlight">15%</span> 
+    สำหรับการใช้งานระยะยาว
+</div>
+    </div>
+
+    <div class="detail-container">
+        <h2 style="text-align: center; color: var(--primary); font-size: 32px;">เปรียบเทียบฟีเจอร์แบบละเอียด</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th style="background: #5f7cff81; border-radius: 15px 0 0 0;">ฟังก์ชันการใช้งาน</th>
+                    <th class="th-starter">Starter</th>
+                    <th class="th-growth">Growth</th>
+                    <th class="th-perf">Performance</th>
+                    <th class="th-ent" style="border-radius: 0 15px 0 0;">Enterprise</th>
+                </tr>
+            </thead>
+
+
+  <tbody>
+                <tr class="highlight-row">
+                    <td class="feature-name">⭐ ไม่จำกัดบัญชีผู้ใช้</td>
+                    <td class="th-starter">✔ (ฟรี)</td>
+                    <td class="th-growth">✔ (ฟรี)</td>
+                    <td class="th-perf">✔ (ฟรี)</td>
+                    <td class="th-ent">✔ (ฟรี)</td>
+                </tr>
+                <tr class="highlight-row">
+                    <td class="feature-name">⭐ ระบบจัดการรูปภาพ</td>
+                    <td class="th-starter">✔ (ฟรี)</td>
+                    <td class="th-growth">✔ (ฟรี)</td>
+                    <td class="th-perf">✔ (ฟรี)</td>
+                    <td class="th-ent">✔ (ฟรี)</td>
+
+                </tr>
+                <tr><td class="feature-name">บอร์ดแสดงผล</td>
+		<td class="th-starter"> ✔ </td>
+		<td class="th-growth"> ✔ </td>
+		<td class="th-perf"> ✔ </td>
+		<td class="th-ent"> ✔ </td>
+		</tr>
+
+                <tr>
+		<td class="feature-name">ระบบตีราคา</td>
+		<td class="th-starter"> ✔ </td>
+		<td class="th-growth"> ✔ </td>
+		<td class="th-perf"> ✔ </td>
+		<td class="th-ent"> ✔ </td>
+		</tr>
+
+                <tr>
+		<td class="feature-name">รายงานพื้นฐาน</td>
+		<td class="th-starter"> ✔ </td>
+		<td class="th-growth"> ✔ </td>
+		<td class="th-perf"> ✔ </td>
+		<td class="th-ent"> ✔ </td>
+		</tr>
+
+                <tr>
+		<td class="feature-name">ระบบช่วยการเสนอราคา</td>
+		<td class="cell-basic"> ✘ </td>
+		<td class="th-growth"> ✔ </td>
+		<td class="th-perf"> ✔ </td>
+		<td class="th-ent"> ✔ </td>
+		</tr>
+
+                <tr>
+		<td class="feature-name">ระบบติดตามหนี้</td>
+		<td class="cell-basic"> ✘ </td>
+		<td class="th-growth"> ✔ </td>
+		<td class="th-perf"> ✔ </td>
+		<td class="th-ent"> ✔ </td>
+		</tr>
+
+                <tr>
+		<td class="feature-name">ระบบ QC</td>
+		<td class="cell-basic"> ✘ </td>
+		<td class="th-growth"> ✔ </td>
+		<td class="th-perf"> ✔ </td>
+		<td class="th-ent"> ✔ </td>
+		</tr>
+
+                <tr>
+		<td class="feature-name">รายงานขั้นสูง</td>
+		<td class="cell-basic"> ✘ </td>
+		<td class="th-growth"> ✔ </td>
+		<td class="th-perf"> ✔ </td>
+		<td class="th-ent"> ✔ </td>
+		</tr>
+
+                <tr>
+		<td class="feature-name">ระบบตลาดอะไหล่</td>
+		<td class="cell-basic"> ✘ </td>
+		<td class="cell-growth"> ✘ </td>
+		<td class="th-perf"> ✔ </td>
+		<td class="th-ent"> ✔ </td>
+		</tr>
+
+                <tr>
+		<td class="feature-name">ระบบวางแผนงานซ่อม</td>
+		<td class="cell-basic"> ✘ </td>
+		<td class="cell-growth"> ✘ </td>
+		<td class="th-perf"> ✔ </td>
+		<td class="th-ent"> ✔ </td>
+		</tr>
+
+                <tr>
+		<td class="feature-name">ระบบติดตามงานซ่อม</td>
+		<td class="cell-basic"> ✘ </td>
+		<td class="cell-growth"> ✘ </td>
+		<td class="th-perf"> ✔ </td>
+		<td class="th-ent"> ✔ </td>
+		</tr>
+
+                <tr>
+		<td class="feature-name">ระบบดึงข้อมูลจาก EMCS</td>
+		<td class="bg-basic"> ✘ </td>
+		<td class="cell-growth"> ✘ </td>
+		<td class="cell-premium"> ✘ </td>
+		<td class="th-ent"> ✔ </td>
+		</tr>
+
+                <tr>
+		<td class="feature-name">ระบบดึงรายการซ่อมจาก Vauto</td>
+		<td class="bg-basic"> ✘ </td>
+		<td class="cell-growth"> ✘ </td>
+		<td class="cell-premium"> ✘ </td>
+		<td class="th-ent"> ✔ </td>
+		</tr>
+
+                <tr>
+		<td class="feature-name">ระบบคีย์รายการพิเศษ</td>
+		<td class="bg-basic"> ✘ </td>
+		<td class="cell-growth"> ✘ </td>
+		<td class="cell-premium"> ✘ </td>
+		<td class="th-ent"> ✔ </td>
+		</tr>
+</tr>
+            </tbody>
+        </table>
+
+        <h3 style="margin-top: 40px;">Add-ons เพิ่มประสิทธิภาพ</h3>
+        <table>
+            <tr><td class="feature-name">ระบบคะแนนงานซ่อม</td><td colspan="4">1,000 / เดือน</td></tr>
+            <tr><td class="feature-name">ระบบแชทภายใน</td><td colspan="4">500 / เดือน</td></tr>
+            <tr><td class="feature-name">Fast Upload Image</td><td colspan="4">300 / เดือน</td></tr>
+            <tr><td class="feature-name">ระบบจัดการอะไหล่ / วัสดุสิ้นเปลือง</td><td colspan="4">300 / เดือน</td></tr>
+            <tr><td class="feature-name">รายงานประจำวันผ่าน LINE</td><td colspan="4">300 / เดือน</td></tr>
+        </table>
+
+<div class="footer-promo" style="
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 30px;
+    gap: 20px;
+    flex-wrap: wrap;
+">
+
+    <!-- ฝั่งซ้าย -->
+    <div style="text-align: left;">
+        <strong style="font-size: 20px; display: block; margin-bottom: 10px;">
+            สอบถามข้อมูลเพิ่มเติม
+        </strong>
+
+        <!-- ลิงก์เว็บไซต์ -->
+        <a href="https://garage-pro.net/" target="_blank" style="
+            display: block;
+            font-size: 19px;
+            color: #007bff;
+            text-decoration: none;
+            font-weight: bold;
+        ">
+            🌐 https://garage-pro.net/
+        </a>
+
+        <!-- เบอร์โทร (กดโทรได้) -->
+        <a href="tel:0812345678" style="
+            font-size: 18px;
+            color: black;
+            text-decoration: none;
+            font-weight: bold;
+        ">
+            📞 CELL : 061-396-8141
+        </a>
+    </div>
+
+    <!-- ฝั่งขวา -->
+    <div style="text-align: center;">
+
+        <!-- ปุ่ม LINE พร้อม icon -->
+        <a href="https://line.me/R/ti/p/@GaragePro" target="_blank" style="
+            background: #06C755;
+            color: white;
+            padding: 12px 18px;
+            border-radius: 10px;
+            font-weight: bold;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        ">
+            <i class="ri-line-fill" style="font-size: 20px;"></i>
+            @LINE สอบถามข้อมูลเพิ่มเติม
+        </a>
+
+    </div>
+
+</div>
+
+</div>
+        </div>
+    </div>
+</body>
+<!-- Overlay -->
+<div id="compareModal" class="modal">
+    <div class="modal-content">
+
+        <!-- ปุ่มปิด -->
+        <span class="close" onclick="closeCompare()">&times;</span>
+
+        <!-- โหลดหน้า compare -->
+        <iframe id="compareFrame" src="compare.html"></iframe>
+       
+        <script>
+function openCompare() {
+    document.getElementById("compareModal").style.display = "block";
+}
+
+function closeCompare() {
+    const modal = document.getElementById("compareModal");
+    const frame = document.getElementById("compareFrame");
+
+    modal.style.display = "none";
+
+    // reset ทุกครั้งที่เปิด
+    setTimeout(() => {
+        frame.contentWindow.resetForm();
+    }, 100);
+}
+
+/* คลิกนอก = ปิด + รี */
+window.onclick = function(e) {
+    const modal = document.getElementById("compareModal");
+    if (e.target === modal) {
+        closeCompare();
+    }
+}
+
+/* กด ESC = ปิด + รี */
+document.addEventListener("keydown", function(e) {
+    if (e.key === "Escape") {
+        closeCompare();
+    }
+});
+</script>
+
+    </div>
+</div>
+
+           </html>

@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=K2D:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<title>Compare Packages</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<style>
+
+
+body,*{font-family:'K2D','Sarabun',sans-serif}
+
+:root {
+    --primary: #1a237e;
+    --accent: #ff9800;
+    --bg: linear-gradient(135deg, #081942 0%, #1e293b 100%);
+}
+
+body {
+    color: white;
+    padding: 0;
+}
+
+.page-wrapper {
+    background: var(--bg);
+    max-width: 900px;
+    margin: auto;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+}
+
+/* Header */
+h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Toggle Buttons */
+.toggle {
+    text-align: center;
+    margin-bottom: 20px;
+}
+.toggle button {
+    padding: 8px 16px;
+    border: none;
+    cursor: pointer;
+    border-radius: 20px;
+    margin: 0 5px;
+}
+.toggle .active {
+    background: var(--accent);
+}
+
+/* Layout */
+.compare-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+    max-width: 500px;
+    margin: auto;
+    border-radius: 20px;
+}
+
+/* Box/Card */
+.box {
+    background: white;
+    color: #333;
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+/* Select Input */
+select {
+    width: 100%;
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
+/* Addons */
+.addons label {
+    display: flex;
+    justify-content: space-between;
+    background: #f1f5f9;
+    padding:8px;
+    margin: 6px 0;
+    border-radius: 10px;
+    cursor: pointer;
+}
+.addons input {
+    margin-right: 10px;
+}
+
+/* Result */
+.result {
+    margin-top: 15px;
+    padding: 15px;
+    border-radius: 15px;
+    background: #f8fafc;
+}
+
+/* Buttons */
+.main-btn {
+    margin-top: 20px;
+    width: 100%;
+    padding: 12px;
+    border: none;
+    background: var(--accent);
+    font-weight: bold;
+    border-radius: 12px;
+    cursor: pointer;
+}
+.print-btn {
+    margin-top: 10px;
+    width: 100%;
+    padding: 8px;
+    background: #1a237e;
+    color: white;
+    border: none;
+    border-radius: 10px;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .compare-container {grid-template-columns: 1fr;}
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="page-wrapper">
+<h2>🔍 เช็คราคาแพ็คเกจ</h2>
+
+<!-- Customer Info -->
+<div class="compare-container">
+    <h3>ข้อมูลลูกค้า</h3>
+    <input id="customerName" placeholder="ชื่อบริษัท" style="padding:10px; border-radius: 10px;">
+    <input id="customerAddress" placeholder="ที่อยู่" style="padding:10px; border-radius: 10px;">
+    <input id="customerTax" placeholder="เลขผู้เสียภาษี" style="padding:10px; border-radius: 10px;">
+</div>
+
+<br></br>
+
+<!-- Compare Packages -->
+<div class="compare-container">
+
+    <!-- Package A -->
+    <div class="box">
+        <h3>แพ็คเกจ A</h3>
+        <select class="plan">
+            <option value="3900">Basic - 3,900 บาท</option>
+            <option value="5900">Growth - 5,900 บาท</option>
+            <option value="7900">Performance - 7,900 บาท</option>
+            <option value="9900">Enterprise - 9,900 บาท</option>
+        </select>
+        <div class="addons">
+            <label><span><input type="checkbox" value="1000">คะแนนงานซ่อม</span><span>1000 บาท</span></label>
+            <label><span><input type="checkbox" value="500">แชท</span><span>500 บาท</span></label>
+            <label><span><input type="checkbox" value="300">Upload</span><span>300 บาท</span></label>
+            <label><span><input type="checkbox" value="300">อะไหล่</span><span>300 บาท</span></label>
+            <label><span><input type="checkbox" value="300">LINE</span><span>300 บาท</span></label>
+        </div>
+        <div class="result" id="resultA"></div>
+    </div>
+</div>
+</div>
+
+
+
+<script>
+
+const format = (num) => num.toLocaleString(undefined, {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+});
+
+let currentHTML = "";
+let currentDocNo = "";
+let mode = "monthly";
+
+// Set mode toggle
+function setMode(m) {
+    mode = m;
+    document.getElementById("monthlyBtn")?.classList.toggle("active", m==="monthly");
+    document.getElementById("yearlyBtn")?.classList.toggle("active", m==="yearly");
+}
+
+// Get package data
+function getData(box) {
+    const planEl = box.querySelector(".plan");
+    const plan = parseFloat(planEl.value);
+    const planName = planEl.options[planEl.selectedIndex].text;
+
+    let addons = 0;
+    let addonList = [];
+    box.querySelectorAll("input:checked").forEach(el => {
+        addons += +el.value;
+        addonList.push({ name: el.parentElement.innerText.trim(), price: +el.value });
+    });
+
+    const subtotalM = plan + addons;
+    const baseY = subtotalM * 12;
+    const discount = baseY * 0.15;
+    const afterDiscount = baseY - discount;
+
+    return {
+        plan, planName, addons, addonList, discount,
+        monthly: { subtotal: subtotalM },
+        yearly: { base: baseY, subtotal: afterDiscount }
+    };
+}
+
+// Render results
+function render(r, el) {
+    el.innerHTML = `
+        <p>แพ็คเกจ: ${format(r.plan)} บาท</p>
+        <p>Add-ons: ${format(r.addons)} บาท</p>
+        <hr>
+        <p><b>รายเดือน: ${format(r.monthly.subtotal)} บาท</b></p>
+        <p><b>รายปี: ${format(r.yearly.subtotal)} บาท</b></p>
+        <button class="print-btn" onclick="exportPDF(this)">🖨️ พิมพ์ / Save PDF</button>
+    `;
+}
+
+// Calculate for both packages
+function calculate() {
+    const box = document.querySelector(".box");
+    render(getData(box), document.getElementById("resultA"));
+}
+
+// Event listeners
+window.addEventListener("DOMContentLoaded", () => {
+    calculate();
+    document.querySelectorAll(".plan, .addons input").forEach(el => el.addEventListener("change", calculate));
+});
+
+// Print Export
+function exportPDF(btn) {
+
+    // loading state
+    btn.classList.add("loading");
+    btn.innerText = "กำลังเปิดเอกสาร...";
+
+    const parent = btn.closest(".box");
+    const data = getData(parent);
+
+    // คำนวณ
+    const vatM = data.monthly.subtotal * 0.07;
+    const totalM = data.monthly.subtotal + vatM;
+
+    const vatY = data.yearly.subtotal * 0.07;
+    const totalY = data.yearly.subtotal + vatY;
+
+    // customer
+    const customer = document.getElementById("customerName").value;
+    const address = document.getElementById("customerAddress").value;
+    const tax = document.getElementById("customerTax").value;
+
+    if (!customer || !address || !tax) {
+        alert("กรุณากรอกข้อมูลลูกค้าให้ครบ");
+        btn.classList.remove("loading");
+        btn.innerText = "🖨️ พิมพ์ / Save PDF";
+        return;
+    }
+
+    // doc info
+    const today = new Date();
+    const dateStr = today.toLocaleDateString("th-TH");
+    const docNo = "QT-" + Date.now();
+
+    // generate html
+    const html = generateHTML(
+        data, customer, address, tax,
+        docNo, dateStr,
+        vatM, totalM,
+        vatY, totalY
+    );
+
+    // ✅ เปิดหน้าใหม่
+    const newWindow = window.open("","_blank");
+
+    newWindow.document.write(html);
+    newWindow.document.close();
+
+    // ✅ auto print (optional)
+const img = newWindow.document.querySelector("img");
+img.onload = () => newWindow.print();
+
+    // reset ปุ่ม
+    setTimeout(() => {
+        btn.classList.remove("loading");
+        btn.innerText = "🖨️ พิมพ์ / Save PDF";
+    }, 300);
+}
+
+// Generate Quotation HTML
+function generateHTML(data, customer, address, tax, docNo, dateStr, vatM, totalM, vatY, totalY) {
+
+    return `
+
+
+<style>
+
+@media print {
+    button, div[style*="text-align: center"] {
+        display: none;
+    }
+}
+  
+body {
+    font-family: 'K2D','Sarabun', sans-serif;
+    color: #000;
+}
+
+.page {
+    width: 210mm;
+    padding: 10mm;
+    margin: auto;
+    background: #fff;
+}
+
+/* HEADER */
+.header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.company {
+    display: flex;
+    gap: 10px;
+    font-size: 14px;
+}
+
+.company img {
+    height: 60px;
+}
+
+.doc-info {
+    text-align: right;
+    font-size: 14px;
+}
+
+/* TITLE */
+.title {
+    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+    margin: 20px 0;
+}
+
+/* CUSTOMER */
+.customer-box {
+    background: white;
+    color: #333;
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    margin-bottom: 20px;
+    font-size: 16px;
+}
+
+/* PRICE SECTION */
+.price-section {
+    background: #fff;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+}
+
+/* TABLE */
+table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    table-layout: fixed;
+}
+
+th {
+    background: #1a237e;
+    color: #fff;
+    padding: 12px;
+}
+
+td {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.right {
+    text-align: right;
+}
+
+/* SUMMARY */
+.summary {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.summary td {
+    padding: 10px;
+    border-top: 1px solid #eee;
+}
+
+.summary tr:first-child td {
+    border-top: none;
+}
+
+.summary .discount {
+    color: red;
+}
+
+.summary .total {
+    font-weight: bold;
+    font-size: 16px;
+}
+
+
+.discount {
+    color: red;
+}
+
+.total {
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.total span:last-child {
+    font-size: 18px;
+}
+
+/* SIGN */
+.signature {
+    margin-top: 40px;
+    display: flex;
+    justify-content: space-between;
+    text-align: center;
+}
+
+.line {
+    border-top: 1px solid #000;
+    width: 250px;
+    margin: 40px auto 5px;
+}
+
+/* FOOTER */
+.footer {
+    margin-top: 10px;
+    font-size: 12px;
+    color: #555;
+}
+
+
+</style>
+
+    <div style="text-align: center; margin-bottom:10px;">
+    <button onclick="window.print()" style="padding:8px 12px; cursor:pointer;">
+        🖨️ พิมพ์ / Save PDF
+    </button>
+</div>
+
+<div class="page">
+
+    <!-- HEADER -->
+    <div class="header">
+        <div class="company">
+            <img src="images/logo_office.png">
+            <div>
+                <b>บริษัท อาร์มาดิโล่ เทค จำกัด</b><br>
+                40/2 หมู่ 5 ต.บางเดื่อ อ.เมืองปทุมธานี<br>
+                จ.ปทุมธานี 12000<br>
+                โทร: 061-396-8141<br>
+                เลขผู้เสียภาษี: 0135563009156
+            </div>
+        </div>
+
+        <div class="doc-info">
+            เลขที่: ${docNo}<br>
+            วันที่: ${dateStr}
+        </div>
+    </div>
+
+    <!-- TITLE -->
+    <div class="title">
+        ใบเสนอราคา (Quotation)
+    </div>
+
+    <!-- CUSTOMER -->
+    <div class="customer-box">
+        <b>ลูกค้า</b><br>
+        ${customer}<br>
+        ${address}<br>
+        เลขผู้เสียภาษี: ${tax}
+    </div>
+
+    <!-- PRICE SECTION -->
+    <div class="price-section">
+
+        <table>
+            <tr>
+                <th>รายการ</th>
+                <th class="right">รายเดือน</th>
+                <th class="right">รายปี</th>
+            </tr>
+
+            <tr>
+                <td>${data.planName}</td>
+                <td class="right">${format(data.plan)}</td>
+                <td class="right">${format(data.plan*12)}</td>
+            </tr>
+
+            ${data.addonList.map(a => `
+                <tr>
+                    <td>↳ ${a.name}</td>
+                    <td class="right">${format(a.price)}</td>
+                    <td class="right">${format(a.price*12)}</td>
+                </tr>
+            `).join("")}
+
+        </table>
+
+        <!-- SUMMARY -->
+       <table class="summary">
+    <tr>
+        <td>รวมก่อนส่วนลด</td>
+        <td class="right">${format(data.monthly.subtotal)}</td>
+        <td class="right">${format(data.yearly.base)}</td>
+    </tr>
+
+    <tr class="discount">
+        <td>ส่วนลด 15%</td>
+        <td></td>
+        <td class="right">-${format(data.discount)}</td>
+    </tr>
+
+    <tr>
+        <td>VAT 7%</td>
+        <td class="right">${format(vatM)}</td>
+        <td class="right">${format(vatY)}</td>
+    </tr>
+
+    <tr class="total">
+        <td>รวมสุทธิ</td>
+        <td class="right">${format(totalM)}</td>
+        <td class="right">${format(totalY)} บาท</td>
+    </tr>
+</table>
+
+    </div>
+
+    <!-- SIGN -->
+    <div class="signature">
+        <div>
+            <div class="line"></div>
+            ผู้เสนอราคา
+        </div>
+        <div>
+            <div class="line"></div>
+            ผู้อนุมัติ
+        </div>
+    </div>
+
+    <div class="footer">
+        หมายเหตุ: ใบเสนอราคานี้มีอายุ 30 วัน
+    </div>
+
+</div>
+
+    `;
+}
+
+// Reset Form
+function resetForm() {
+    document.querySelectorAll("input[type=checkbox]").forEach(el => el.checked = false);
+    document.querySelectorAll("select").forEach(el => el.selectedIndex = 0);
+    document.querySelectorAll(".result").forEach(el => el.innerHTML = "");
+    document.getElementById("customerName").value = "";
+    document.getElementById("customerAddress").value = "";
+    document.getElementById("customerTax").value = "";
+    mode = "monthly";
+}
+
+// Close modal on click background
+document.getElementById("previewModal").addEventListener("click", e => { if(e.target.id==="previewModal"); });
+document.addEventListener("keydown", e => { if(e.key==="Escape"); });
+</script>
+
+</body>
+</html>
