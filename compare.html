@@ -3,8 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="mobile-web-app-capable" content="yes">
 
 <!-- Fonts -->
 <link href="https://fonts.googleapis.com/css2?family=K2D:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -286,51 +284,15 @@ function exportPDF(btn) {
         vatY, totalY
     );
 
-// 🔥 เช็คว่าเป็นมือถือไหม
-const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    // ✅ เปิดหน้าใหม่
+    const newWindow = window.open("","_blank");
 
-if (isMobile) {
-    // 📱 มือถือ → ใช้ PDF
-    const div = document.createElement("div");
-    div.innerHTML = html;
-
-    // ซ่อนไม่ให้เห็นบนจอ
-    div.style.position = "fixed";
-    div.style.left = "-9999px";
-
-    document.body.appendChild(div);
-    div.style.top = "0";
-    div.style.opacity = "0";
-
-   html2pdf()
-    .set({
-        margin: 5,
-        filename: `Quotation-${docNo}.pdf`,
-        html2canvas: { 
-            scale: 2,
-            useCORS: true,
-            scrollY: 0   // 👈 เพิ่มบรรทัดนี้
-        },
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-        })
-        .from(div)
-        .save()
-        .then(() => {
-            div.remove();
-            btn.innerText = "🖨️ พิมพ์ / Save PDF";
-        });
-
-} else {
-    // 💻 คอม → print ปกติ
-    const newWindow = window.open("", "_blank");
     newWindow.document.write(html);
     newWindow.document.close();
 
-    setTimeout(() => {
-        newWindow.print();
-        btn.innerText = "🖨️ พิมพ์ / Save PDF";
-    }, 500);
-}
+setTimeout(() => {
+    newWindow.print();
+}, 500);
 }
 
 // Generate Quotation HTML
@@ -338,7 +300,6 @@ function generateHTML(data, customer, address, tax, docNo, dateStr, vatM, totalM
 
     return `
 
-<base href="${location.origin}/">
 
 <style>
 
@@ -634,7 +595,7 @@ td {
     </div>
     <br>
     <div class="footer">
-        <b>หมายเหตุ:</b><br>
+        <b>หมายเหตุ:</b><hr>
         - ใบเสนอราคานี้มีอายุ 30 วัน<br>
         - ยังไม่ หักภาษี ณ ที่จ่าย
     </div>
