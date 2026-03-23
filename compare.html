@@ -284,15 +284,45 @@ function exportPDF(btn) {
         vatY, totalY
     );
 
-    // ✅ เปิดหน้าใหม่
-    const newWindow = window.open("","_blank");
+// 🔥 เช็คว่าเป็นมือถือไหม
+const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
+if (isMobile) {
+    // 📱 มือถือ → ใช้ PDF
+    const div = document.createElement("div");
+    div.innerHTML = html;
+
+    // ซ่อนไม่ให้เห็นบนจอ
+    div.style.position = "fixed";
+    div.style.left = "-9999px";
+
+    document.body.appendChild(div);
+
+    html2pdf()
+        .set({
+            margin: 5,
+            filename: `Quotation-${docNo}.pdf`,
+            html2canvas: { scale: 2, useCORS: true },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        })
+        .from(div)
+        .save()
+        .then(() => {
+            div.remove();
+            btn.innerText = "🖨️ กำลังดาวน์โหลด PDF";
+        });
+
+} else {
+    // 💻 คอม → print ปกติ
+    const newWindow = window.open("", "_blank");
     newWindow.document.write(html);
     newWindow.document.close();
 
-setTimeout(() => {
-    newWindow.print();
-}, 500);
+    setTimeout(() => {
+        newWindow.print();
+        btn.innerText = "🖨️ พิมพ์ / Save PDF";
+    }, 500);
+}
 }
 
 // Generate Quotation HTML
@@ -595,7 +625,7 @@ td {
     </div>
     <br>
     <div class="footer">
-        <b>หมายเหตุ:</b><hr>
+        <b>หมายเหตุ:</b><br>
         - ใบเสนอราคานี้มีอายุ 30 วัน<br>
         - ยังไม่ หักภาษี ณ ที่จ่าย
     </div>
