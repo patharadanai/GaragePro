@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
 
 <!-- Fonts -->
 <link href="https://fonts.googleapis.com/css2?family=K2D:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -297,19 +299,25 @@ if (isMobile) {
     div.style.left = "-9999px";
 
     document.body.appendChild(div);
+    div.style.top = "0";
+    div.style.opacity = "0";
 
-    html2pdf()
-        .set({
-            margin: 5,
-            filename: `Quotation-${docNo}.pdf`,
-            html2canvas: { scale: 2, useCORS: true },
+   html2pdf()
+    .set({
+        margin: 5,
+        filename: `Quotation-${docNo}.pdf`,
+        html2canvas: { 
+            scale: 2,
+            useCORS: true,
+            scrollY: 0   // 👈 เพิ่มบรรทัดนี้
+        },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         })
         .from(div)
         .save()
         .then(() => {
             div.remove();
-            btn.innerText = "🖨️ กำลังดาวน์โหลด PDF";
+            btn.innerText = "🖨️ พิมพ์ / Save PDF";
         });
 
 } else {
@@ -330,6 +338,7 @@ function generateHTML(data, customer, address, tax, docNo, dateStr, vatM, totalM
 
     return `
 
+<base href="${location.origin}/">
 
 <style>
 
